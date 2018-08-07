@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Essential
 {
@@ -14,9 +15,17 @@ namespace Essential
 			List<string> stringList = new List<string>();
 			stringList.Add("test");
 
-			String[] stringTab = new string[] { };
+			String[] stringTab = new string[7] {"","","","","","","" };
 			String[] stringTab2 = new string[10];
 			String[] stringTab3 = new string[] { "a", "b", "c" } ;
+			String[] stringTab4 = new string[] { };//NW!
+			List<Ville> villes = new List<Ville>
+			{
+			new Ville { Nom = "Paris", CodePostal = "75013" },
+			new Ville { Nom = "Bordeaux", CodePostal = "33000" },
+			new Ville { Nom = "Sarlat-La-Canéda", CodePostal = "24200" },
+			new Ville { Nom = "Marseille", CodePostal = "13000" },
+			};
 			stringTab2[0] = "test";
 
 
@@ -96,10 +105,55 @@ namespace Essential
 			{ }
 			finally
 			{ }//tjs executé
-				
+
+			//Lecture ecriture de fichier
+
+			//System.IO.File.ReadAllText("chemin du fichier");
+			//System.IO.File.WriteAllText("chemin du fichier","contenu");
+
+			
+
+			//lire fichier
+			var cheminFichier = @"C:\Temp\villes.txt";
+			if(File.Exists(cheminFichier))
+			{
+				IEnumerable<string> lignesFichier = File.ReadAllLines(cheminFichier);
+				var villesDansFichier = new List<Ville>();
+				foreach (var ligneFichier in lignesFichier)
+				{
+					string[] champs = ligneFichier.Split(';');
+					var ville = new Ville();
+					ville.Nom = champs[0];
+					ville.CodePostal = champs[1];
+
+					villesDansFichier.Add(ville);
+				}
+			}
+			else
+			{
+				//ecrire
+
+				var contenuFichier = new StringBuilder();
+				foreach (var ville in villes)
+				{
+					contenuFichier.AppendLine($"{ville.Nom};{ville.CodePostal}");
+					// ou
+					contenuFichier.AppendLine(string.Join(";",ville.Nom,ville.CodePostal));
+				}
+
+				File.WriteAllText(cheminFichier, contenuFichier.ToString());
+			}
+
+
+
+
+
 
 			Console.ReadLine();
 			Console.ReadKey();
+
+
+
 		}
 
 		static void Fonction(string param)
@@ -108,7 +162,7 @@ namespace Essential
 		// declarationd de class et liens entre elles
 		public class ClassTest:Parent
 			{
-			public string info { get; set; } = "par defaut";
+			public string Info { get; set; } = "par defaut";
 			public ClassGroupeDeTest groupe { get; set; }
 
 		}
@@ -117,16 +171,25 @@ namespace Essential
 
 		public class ClassGroupeDeTest
 		{
-			static string info { get; set; } = "par defaut";
+			static string Info { get; set; } = "par defaut";
 
 			public List<ClassTest> ListeDeTest { get; set; }
 
 		}
+		public class Ville
+		{
+			public string Nom { get; set; }
+			public string CodePostal { get; set; }
+			public string Departement
+			{
+				get { return this.CodePostal.Substring(0, 2); }
+			}
+
+		}
 
 
-		
 		// enumeration
-		
+
 		public class Evenement
 		{
 			public JourSemaine JourSemaine { get; set; }
@@ -142,6 +205,8 @@ namespace Essential
 			Dimanche=7,
 
 		}
+
+		
 
 	}
 }
